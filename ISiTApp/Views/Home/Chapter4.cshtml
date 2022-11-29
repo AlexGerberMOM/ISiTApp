@@ -1,0 +1,175 @@
+﻿@{
+    ViewBag.Title = "Глава 4. Маршрутизация.";
+}
+<h1  class="display-5">@ViewBag.Title</h1>
+
+<div class="row">
+    <div class="col-3">
+        <div class="nav flex-column nav-pills" id="nav-pills" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="nav-c1-tab" data-toggle="tab" href="#nav-c1" role="tab" aria-controls="nav-c1" aria-selected="true">Добавление маршрутизации</a>
+            <a class="nav-link" id="nav-c2-tab" data-toggle="tab" href="#nav-c2" role="tab" aria-controls="nav-c2" aria-selected="false">Определение маршрутов</a>
+            <a class="nav-link" id="nav-c5-tab" data-toggle="tab" href="#nav-c5" role="tab" aria-controls="nav-c5" aria-selected="false">Атрибуты маршрутизации</a>
+            <a class="nav-link" id="nav-c6-tab" data-toggle="tab" href="#nav-c6" role="tab" aria-controls="nav-c6" aria-selected="false">Области</a>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="tab-content" id="nav-tabContent">
+            <!--Добавление маршрутизации-->
+            <div class="tab-pane fade show active" id="nav-c1" role="tabpanel" aria-labelledby="nav-c1-tab">
+                <div class="row">
+                   <div class="col-8">
+                       <b>Получение параметров маршрутов в контроллере</b></br>
+                   <code><pre>
+public string Index()
+{
+    var controller = RouteData.Values["controller"];
+    var action = RouteData.Values["action"];
+    return $"controller: {controller} | action: {action}";
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        <iframe src="/Home/IndexInfo"></iframe>
+                   </div>
+                </div>
+            </div>
+            <!--Определение маршрутов-->
+            <div class="tab-pane fade" id="nav-c2" role="tabpanel" aria-labelledby="nav-c2-tab">
+                <div class="row">
+                   <div class="col-8">
+                       <b>Параметры маршрутов</b></br>
+                   <code><pre>
+// устанавливаем сопоставление маршрутов с контроллерами Program.cs
+app.MapControllerRoute(name: "default", pattern: "{controller}/{action}/{id}");
+app.MapControllerRoute(name: "name_age", pattern: "{controller}/{action}/{name}/{age}");
+// указываем экшены в контроллере
+public class HomeController : Controller
+{
+    public string Index(int id) => $"Index Page. Id: {id}";
+    public string About(string name, int age) => $"About Page. Name: {name}  Age: {age}";
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                       <button type="button" data-frame-load="c1-1" class="btn btn-link btn-sm">https://localhost:XXXX/Home/About/Alex/33</button>
+                       <iframe data-frame-group="c1-1" data-frame-src="/Home/About/Alex/33" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       <b>Ограничения маршрутов</b>
+                   <code><pre>
+app.MapControllerRoute(
+    name: "default", 
+    pattern: "{controller=Home}/{action=Index}/{id:int?}"
+    <b>constraints: new {id= new IntRouteConstraint()}</b>);  // ограничения маршрутов
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        <button type="button" data-frame-load="c1-2" class="btn btn-link btn-sm">https://localhost:XXXX/Home/Index/3</button>
+                       <iframe data-frame-group="c1-2" data-frame-src="/Home/Index/3" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+            </div>
+            <!--Атрибуты маршрутизации-->
+            <div class="tab-pane fade" id="nav-c5" role="tabpanel" aria-labelledby="nav-c5-tab">
+                <div class="row">
+                   <div class="col-8">
+                    <b>Определение маршрута непосредственно в контроллере</b>
+                   <code><pre>
+public class HomeController : Controller
+{
+    [Route("homepage")]
+    public string Index() => "Самая ГЛАВНАЯ страница";
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-3" class="btn btn-link btn-sm">https://localhost:XXXX/homepage</button>
+                      <iframe data-frame-group="c1-3" data-frame-src="/homepage" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                    <b>Применение необязательного параметра</b>
+                   <code><pre>
+public class HomeController : Controller
+{
+    [Route("testpage/{id?}")]
+    public string Test(int? id)
+    {
+        if(id is not null)
+            return $"Параметр id={id}";
+        else
+            return $"Параметр id неопределен";
+    }
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-4" class="btn btn-link btn-sm">https://localhost:XXXX/testpage</button>
+                      <iframe data-frame-group="c1-4" data-frame-src="/testpage" frameborder="0" height="50"></iframe>
+                      <button type="button" data-frame-load="c1-5" class="btn btn-link btn-sm">https://localhost:XXXX/testpage/13</button>
+                      <iframe data-frame-group="c1-5" data-frame-src="/testpage/13" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                    <b>Использование префиксов</b>
+                   <code><pre>
+[Route("main/{id:int}/{name:maxlength(10)}")]
+public string Test(int id, string name) => $" id={id} | name={name}";
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-6" class="btn btn-link btn-sm">https://localhost:XXXX/main/1/Ivan</button>
+                      <iframe data-frame-group="c1-6" data-frame-src="/main/1/Ivan" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+            </div>
+            <!--Области-->
+            <div class="tab-pane fade" id="nav-c6" role="tabpanel" aria-labelledby="nav-c6-tab">
+                <div class="row">
+                   <div class="col-8">
+                    <b>Области</b><br/>Добавление области и реализация доступа через метод <code>app.MapControllerRoute</code>
+                   <code><pre>
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-7" class="btn btn-link btn-sm">https://localhost:XXXX/</button>
+                      <iframe data-frame-group="c1-7" data-frame-src="/" frameborder="0" height="50"></iframe>
+                      <button type="button" data-frame-load="c1-8" class="btn btn-link btn-sm">https://localhost:XXXX/Account</button>
+                      <iframe data-frame-group="c1-8" data-frame-src="/Account" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                    <b>Метод MapAreaControllerRoute</b><br/>
+                   <code><pre>
+// маршрут для области account
+app.MapAreaControllerRoute(
+    name: "account_area",
+    areaName: "account",
+    pattern: "profile/{controller=Home}/{action=Index}/{id?}");
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-9" class="btn btn-link btn-sm">https://localhost:XXXX/Profile</button>
+                      <iframe data-frame-group="c1-9" data-frame-src="/Profile" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+[...document.querySelectorAll('[data-frame-load]')].forEach(button => {
+    button.addEventListener('click', () => {
+        const group = button.getAttribute('data-frame-load');
+        [...document.querySelectorAll(`[data-frame-group="${group}"]`)].forEach(frame => {
+            frame.setAttribute('src', frame.getAttribute('data-frame-src'));
+        });
+    });
+});
+</script>

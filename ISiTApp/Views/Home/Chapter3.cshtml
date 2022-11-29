@@ -1,0 +1,378 @@
+﻿@{
+    ViewBag.Title = "Глава 3. Представления.";
+}
+
+<h1  class="display-5">@ViewBag.Title</h1>
+
+<div class="row">
+    <div class="col-3">
+        <div class="nav flex-column nav-pills" id="nav-pills" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="nav-c1-tab" data-toggle="tab" href="#nav-c1" role="tab" aria-controls="nav-c1" aria-selected="true">Движок представлений Razor</a>
+            <a class="nav-link" id="nav-c2-tab" data-toggle="tab" href="#nav-c2" role="tab" aria-controls="nav-c2" aria-selected="false">Передача данных в представление</a>
+            <a class="nav-link" id="nav-c5-tab" data-toggle="tab" href="#nav-c5" role="tab" aria-controls="nav-c5" aria-selected="false">Частичные представления</a>
+            <a class="nav-link" id="nav-c6-tab" data-toggle="tab" href="#nav-c6" role="tab" aria-controls="nav-c6" aria-selected="false">Внедрение зависимостей в представления</a>
+            <a class="nav-link" id="nav-c8-tab" data-toggle="tab" href="#nav-c8" role="tab" aria-controls="nav-c8" aria-selected="false">Создание движка представлений</a>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="tab-content" id="nav-tabContent">
+            <!--Движок представлений Razor-->
+            <div class="tab-pane fade show active" id="nav-c1" role="tabpanel" aria-labelledby="nav-c1-tab">
+                <div class="row">
+                   <div class="col-8">
+                       <b>Условные конструкции</b></br>
+                   <code><pre>@@{
+    string morning = "Доброе утро";
+    string evening = "Добрый вечер";
+    string hello = "Здравствуйте";
+    int hour = DateTime.Now.Hour;
+}
+@@if (hour < 12) { @@morning }
+else if (hour > 17) { @@evening }
+else { @@hello }
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @{
+                            string morning = "Доброе утро";
+                            string evening = "Добрый вечер";
+                            string hello = "Здравствуйте";
+                            int hour = DateTime.Now.Hour;
+                        }
+                        @if (hour < 12)
+                        {
+                        <h4>@morning</h4>
+                        }
+                        else if (hour > 17)
+                        {
+                        <h4>@evening</h4>
+                        }
+                        else
+                        {
+                        <h4>@hello</h4>
+                        }
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       Конструкция switch:
+                   <code><pre>
+@@{
+    string language = "russian";
+}
+@@switch (language)
+{
+    case "russian":
+Привет мир!
+        break;
+    case "german":
+Hallo Welt!
+        break;
+    default:
+Hello World!
+        break;
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @{
+                            string language = "russian";
+                        }
+                        @switch (language)
+                        {
+                            case "russian":
+                <h4>Привет мир!</h4>
+                                break;
+                            case "german":
+                <h4>Hallo Welt!</h4>
+                                break;
+                            default:
+                <h4>Hello World!</h4>
+                                break;
+                        }
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       <b>Циклы</b></br>Цикл for:
+                   <code><pre>
+@@{
+    string[] people = { "Иванов", "Петров", "Сидоров" };
+}
+<ul>
+    @@for (var i = 0; i < people.Length; i++)
+    {
+<li>@@people[i]</li>
+    }
+</ul>
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @{
+                            string[] people = { "Иванов", "Петров", "Сидоров" };
+                        }
+                        <ul>
+                            @for (var i = 0; i < people.Length; i++)
+                            {
+                            <li>@people[i]</li>
+                            }
+                        </ul>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       Цикл foreach:
+                   <code><pre>
+@@{
+    string[] people = { "Иванова", "Петрова", "Сидорова" };
+}
+<ul>
+    @@foreach (var person in people)
+    {
+<li>@@person</li>
+    }
+</ul>
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @{
+                            string[] peoples = { "Иванова", "Петрова", "Сидорова" };
+                        }
+                        <ul>
+                            @foreach (var person in peoples)
+                            {
+                                <li>@person</li>
+                            }
+                       </ul>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       Цикл while:
+                   <code><pre>
+@@{
+string[] people = { "Иванов", "Петров", "Сидоров" };
+var i = 0;
+}
+<ul>
+@@while (i < people.Length)
+{
+<li>@@people[i++]</li>
+}
+</ul>
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @{
+                        var idx = 0;
+                        }
+                        <ul>
+                        @while (idx < people.Length)
+                        {
+                        <li>@people[idx++]</li>
+                        }
+                        </ul>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       <b>try...catch</b>
+                   <code><pre>
+@@try
+{
+    throw new InvalidOperationException("Какая-то ошибка");
+}
+catch (Exception ex)
+{
+Исключение: @@ex.Message
+}
+finally
+{
+завершено
+}
+                    </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @try
+                        {
+                            throw new InvalidOperationException("Какая-то ошибка");
+                        }
+                        catch (Exception ex)
+                        {
+                        <p>Исключение: @ex.Message</p>
+                        }
+                        finally
+                        {
+                        <p>завершено</p>
+                        }
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       Функции
+                   <code><pre>
+@@functions
+{
+public int Sum(int a, int b)
+{
+    return a + b;
+}
+public int Square(int n) => n * n;
+}
+Сумма 5 и 4: @@Sum(5, 4)
+Квадрат 4: @@Square(4)
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @functions
+                        {
+                            public int Sum(int a, int b)
+                            {
+                                return a + b;
+                            }
+                            public int Square(int n) => n * n;
+                        }
+                        <p>Сумма 5 и 4: <b> @Sum(5, 4)</b></p>
+                        <p>Квадрат 4: <b>@Square(4)</b></p>
+                   </div>
+                </div>
+            </div>
+            <!--Передача данных в представление-->
+            <div class="tab-pane fade" id="nav-c2" role="tabpanel" aria-labelledby="nav-c2-tab">
+                <div class="row">
+                   <div class="col-8">
+                       <b>ViewBag</b></br>
+                   <code><pre>
+public IActionResult Index()
+{
+    ViewBag.People = new List<string> { "Иванов", "Петров", "Сидоров" };
+    return View();
+}
+                   </pre></code>
+                   <code><pre>
+&lt;h4&gt;Count: @@ViewBag.People.Count&lt;/h4&gt;
+&lt;ul&gt;
+@@foreach (string person in ViewBag.People)
+                                    {
+        &lt;li&gt;@@person&lt;/li&gt;
+                                    }
+&lt;/ul&gt;
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                       @{
+                           ViewBag.People = new List<string> { "Иванов", "Петров", "Сидоров" };
+                        }
+                       <h4>Количество людей: @ViewBag.People.Count</h4>
+                        <ul>
+                        @foreach (string person in ViewBag.People)
+                                                    {
+                                <li>@person</li>
+                                                    }
+                        </ul>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                       <b>Модель представления</b>
+                   <code><pre>
+public IActionResult Index()
+{
+    var people = new List<string> { "Иванов", "Петров", "Сидоров" };
+    return View();
+}
+                   </pre></code>
+                   <code><pre>
+@@model List&lt;string&gt;
+&lt;h4&gt;Количество людей: @@Model.Count&lt;/h4&gt;
+&lt;ul&gt;
+@@foreach (string person in Model)
+                                    {
+        &lt;li&gt;@@person&lt;/li&gt;
+                                    }
+&lt;/ul&gt;
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        <h4>Количество людей: @ViewBag.People.Count</h4>
+                        <ul>
+                            @foreach (string person in ViewBag.People)
+                            {
+                                <li>@person</li>
+                            }
+                        </ul>
+                   </div>
+                </div>
+            </div>
+            <!--Частичные представления-->
+            <div class="tab-pane fade" id="nav-c5" role="tabpanel" aria-labelledby="nav-c5-tab">
+                <div class="row">
+                   <div class="col-8">
+                    <b>Встраивание частичного представления в обычное</b>
+                   <code><pre>
+@@await Html.PartialAsync("YOUR_PARTIAL_VIEW")
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @await Html.PartialAsync("Part")
+                        <span><sup>*Частичное представление из предыдущего пункта</sup></span>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                    <b>Передача данных в частичное представление</b>
+                   <code><pre>
+@@await Html.PartialAsync("YOUR_PARTIAL_VIEW", new List<string>{"Hello", "Привет", "Hallo", "Salut"})
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @await Html.PartialAsync("Part1", new List<string>{"Hello", "Привет", "Hallo", "Salut"})
+                   </div>
+                </div>
+            </div>
+            <!--Внедрение зависимостей в представления-->
+            <div class="tab-pane fade" id="nav-c6" role="tabpanel" aria-labelledby="nav-c6-tab">
+                <div class="row">
+                   <div class="col-8">
+                    <b>Директива @@inject.</b>
+                   <code><pre>
+@@inject ITimeService timeService
+&lt;h4&gt;Текущее время: @@timeService.Time&lt;/h4&gt;
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @inject ITimeService timeService
+                        <h4>Текущее время: @timeService.Time</h4>
+                   </div>
+                </div>
+            </div>
+            <!--Создание движка представлений-->
+            <div class="tab-pane fade" id="nav-c8" role="tabpanel" aria-labelledby="nav-c8-tab">
+                <div class="row">
+                   <div class="col-8">
+                    Соответствующие строки закомментированны в файле Program.cs
+                   <pre>
+                   </pre>
+                   </div>
+                   <div class="col-4">
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+[...document.querySelectorAll('[data-frame-load]')].forEach(button => {
+    button.addEventListener('click', () => {
+        const group = button.getAttribute('data-frame-load');
+        [...document.querySelectorAll(`[data-frame-group="${group}"]`)].forEach(frame => {
+            frame.setAttribute('src', frame.getAttribute('data-frame-src'));
+        });
+    });
+});
+</script>
+
+@section Footer {
+    - Этот текст добавлен дополнительно секцией в представлении
+}

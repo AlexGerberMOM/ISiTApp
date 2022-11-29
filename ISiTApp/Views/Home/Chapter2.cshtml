@@ -1,0 +1,692 @@
+﻿@{
+    ViewBag.Title = "Глава 2. Контроллеры.";
+}
+<h1 class="display-5">@ViewBag.Title</h1>
+
+<div class="row">
+    <div class="col-3">
+            <div class="nav flex-column nav-pills" id="nav-pills" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="nav-c1-tab" data-toggle="tab" href="#nav-c1" role="tab" aria-controls="nav-c1" aria-selected="true">Действия контроллера</a>
+                <a class="nav-link" id="nav-c2-tab" data-toggle="tab" href="#nav-c2" role="tab" aria-controls="nav-c2" aria-selected="false">Обращение к действиям контроллера</a>
+                <a class="nav-link" id="nav-c3-tab" data-toggle="tab" href="#nav-c3" role="tab" aria-controls="nav-c3" aria-selected="false">Методы и атрибуты</a>
+                <a class="nav-link" id="nav-c4-tab" data-toggle="tab" href="#nav-c4" role="tab" aria-controls="nav-c4" aria-selected="false">Типы запросов</a>
+                <a class="nav-link" id="nav-c5-tab" data-toggle="tab" href="#nav-c5" role="tab" aria-controls="nav-c5" aria-selected="false">Контекст контроллера</a>
+                <a class="nav-link" id="nav-c6-tab" data-toggle="tab" href="#nav-c6" role="tab" aria-controls="nav-c6" aria-selected="false">Передача данных в контроллер</a>
+                <a class="nav-link" id="nav-c7-tab" data-toggle="tab" href="#nav-c7" role="tab" aria-controls="nav-c7" aria-selected="false">Результаты действий</a>
+                <a class="nav-link" id="nav-c8-tab" data-toggle="tab" href="#nav-c8" role="tab" aria-controls="nav-c8" aria-selected="false">ContentResult и JsonResult</a>
+                <a class="nav-link" id="nav-c9-tab" data-toggle="tab" href="#nav-c9" role="tab" aria-controls="nav-c9" aria-selected="false">Переадресация</a>
+                <a class="nav-link" id="nav-c10-tab" data-toggle="tab" href="#nav-c10" role="tab" aria-controls="nav-c10" aria-selected="false">Отправка статусных кодов</a>
+                <a class="nav-link" id="nav-c11-tab" data-toggle="tab" href="#nav-c11" role="tab" aria-controls="nav-c11" aria-selected="false">Отправка файлов</a>
+                <a class="nav-link" id="nav-c12-tab" data-toggle="tab" href="#nav-c12" role="tab" aria-controls="nav-c12" aria-selected="false">Передача зависимостей в контроллер</a>
+                <a class="nav-link" id="nav-c13-tab" data-toggle="tab" href="#nav-c13" role="tab" aria-controls="nav-c13" aria-selected="false">Переопределение контроллеров</a>
+            </div>
+    </div>
+    <div class="col-9">
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-c1" role="tabpanel" aria-labelledby="nav-c1-tab">
+                <div class="row">
+                   <div class="col-8">Определение простейшего метода Index в контроллере HomeController.
+                   <code><pre>using Microsoft.AspNetCore.Mvc;
+    namespace MvcApp.Controllers
+    {
+        public class HomeController : Controller
+        {
+            public string Index()
+            {
+                return "Hello METANIT.COM";
+            }
+        }
+    }
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                       <iframe data-frame-group="c1" data-frame-src="/C1" frameborder="0"></iframe>
+                       <button class="btn btn-light btn-sm" data-frame-load="c1">Запустить</button>
+                   </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c2" role="tabpanel" aria-labelledby="nav-c2-tab">
+                <div class="row">
+                    <div class="col-8">Сопоставляем</div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c3" role="tabpanel" aria-labelledby="nav-c3-tab">
+                <div class="row">
+                    <div class="col-8">
+                        Контроллер также может иметь непубличные методы - такие методы не рассматриваются как действия и соответственно не могут соотноситься с запросами.
+                        <code><pre>
+    using Microsoft.AspNetCore.Mvc;
+
+    namespace MvcApp.Controllers
+    {
+        public class HomeController : Controller
+        {
+            public string Index() => "Hello METANIT.COM";
+
+            protected internal string Hello() => "Hello ASP.NET";
+        }
+    }
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe data-frame-group="c1-1" data-frame-src="/C1" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-1" class="btn btn-link btn-sm">https://localhost:XXXX/Home/Index</button>
+                        <iframe data-frame-group="c1-2" data-frame-src="/C1/Hello" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-2" class="btn btn-link btn-sm">https://localhost:XXXX/Home/Hello</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        Атрибуты <b>NonController</b>, <b>ActionName</b> и <b>NonAction</b>
+                        Например, у нас есть класс в папке <i>Controllers</i>, но мы не хотим, чтобы он мог обрабатывать запрос и использоваться как контроллер. Чтобы указать, что этот класс не является контроллером, нам надо использовать над ним атрибут <b>[NonController]</b>.
+                        <code><pre>
+    [NonController]
+    public class HomeController : Controller
+    {
+        //...........
+    }
+                        </pre></code>
+                        Аналогично, если мы хотим, чтобы какой-либо публичный метод контроллера не рассматривался как действие, то мы можем использовать над ним атрибут <b>[NonAction]</b>.
+                        <code><pre>
+    [NonAction]
+    public string Hello()
+    {
+        return "Hello ASP.NET";
+    }
+                        </pre></code>
+                        Атрибут <b>[ActionName]</b> позволяет для метода задать другое имя действия.
+                        <code><pre>
+    [ActionName("Welcome")]
+    public string Hello()
+    {
+        return "Hello ASP.NET";
+    }
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe data-frame-group="c1-3" data-frame-src="/C1NonConroller" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-3" class="btn btn-link btn-sm">https://localhost:XXXX/Home/Index</button>
+                        <iframe data-frame-group="c1-4" data-frame-src="/C1Other/Hello" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-4" class="btn btn-link btn-sm">https://localhost:XXXX/Home/Hello</button>
+                        <iframe data-frame-group="c1-5" data-frame-src="/C1Other/Welcome" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-5" class="btn btn-link btn-sm">https://localhost:XXXX/Home/Welcome</button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c4" role="tabpanel" aria-labelledby="nav-c4-tab">
+                <div class="row">
+                    <div class="col-8">
+                        Для указания типа запроса HTTP нам надо применить к методу один из атрибутов: [HttpGet], [HttpPost], [HttpPut], [HttpPatch], [HttpDelete] и [HttpHead]. Если атрибут явным образом не указан, то метод может обрабатывать все типы запросов: GET, POST, PUT, DELETE.
+                        <code><pre>
+    using Microsoft.AspNetCore.Mvc;
+
+    namespace MvcApp.Controllers
+    {
+        public class HomeController : Controller
+        {
+            [HttpGet]
+            public string Get() => "Hello METANIT.COM";
+
+            [HttpPost]
+            public string Post() => "Hello ASP.NET";
+        }
+    }
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe data-frame-group="c1-6" data-frame-src="/C1/Get" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-6" class="btn btn-link btn-sm">GET https://localhost:XXXX/Home/Get</button>
+                        <iframe data-frame-group="c1-7" data-frame-src="/C1/Post" frameborder="0" height="50"></iframe>
+                        <button type="button" data-frame-load="c1-7" class="btn btn-link btn-sm">POST https://localhost:XXXX/Home/Post</button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c5" role="tabpanel" aria-labelledby="nav-c5-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>Response</b></br>Свойство HttpContext.Response представляет объект HttpResponse и позволяет управлять ответом на запрос.</br>
+                        С помощью объекта Response мы можем отправить настроить параметры ответа и отправить его клиенту. Например, отправим из действия контроллера данные клиенту:
+                        <code><pre>
+using Microsoft.AspNetCore.Mvc;
+
+namespace MvcApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        public async Task Index() 
+        {
+            Response.ContentType = "text/html;charset=utf-8";
+            await Response.WriteAsync("Response from METANIT.COM");
+        }
+    }
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-8" class="btn btn-light btn-sm">Получить ответ</button>
+                        <iframe data-frame-group="c1-8" data-frame-src="/C1/Res" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>Request</b></br>
+                        Свойство HttpContext.Request представляет объект HttpRequest и предоставляет разнообразную информацию о запросе.</br>
+                        Вся основная информация нам доступна из заголовков. Например, получим из запроса все заголовки и выведем их в браузере:
+                        <code><pre>
+using Microsoft.AspNetCore.Mvc;
+
+namespace MvcApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        public async Task Index() 
+        {
+            Response.ContentType = "text/html;charset=utf-8";
+            System.Text.StringBuilder tableBuilder = new("Заголовки запроса<table>");
+            foreach (var header in Request.Headers)
+            {
+                tableBuilder.Append($"<tr><td>{header.Key}</td><td>{header.Value}</td></tr>");
+            }
+            tableBuilder.Append("</table>");
+            await Response.WriteAsync(tableBuilder.ToString());
+        }
+    }
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-9" class="btn btn-light btn-sm">Выполнить запрос</button>
+                        <iframe data-frame-group="c1-9" data-frame-src="/C1/Req" frameborder="0" height="300"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c6" role="tabpanel" aria-labelledby="nav-c6-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>Получение данных через строку запроса</b></br>
+                        Например, определим в контроллере следующий метод:
+                        <code><pre>
+public string Index(string name) => $"Здравствуйте, {name}";
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe src="/C1/SingleName" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>Передача сложных объектов</b>
+                        Хотя строка запроса преимущественно используется для передачи данных примитивных типов, но мы также можем принимать более сложные объекты. Например, определим рядом с контроллером класс Person:
+                        <code><pre>
+using Microsoft.AspNetCore.Mvc;
+
+namespace MvcApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        public string Index(Person person)
+        {
+            return $"Person Имя: {person.Name}  Person Возраст: {person.Age}";
+        }
+    }
+    public record class Person(string Name, int Age);
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-10" class="btn btn-link btn-sm">https://localhost:xxxx/Home/Index?name=Иван&age=33</button>
+                        <iframe data-frame-group="c1-10" data-frame-src="/C1/Person?name=Иван&age=33" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c7" role="tabpanel" aria-labelledby="nav-c7-tab">
+                <div class="row">
+                    <div class="col-8">
+                        В большинстве случаев мы будем иметь дело с объектами типа IActionResult, которые непосредственно предназначены для генерации результата действия. Интерфейс IActionResult находится в пространстве имен Microsoft.AspNetCore.Mvc и определяет один метод:
+                        <code><pre>
+public interface IActionResult
+{
+    Task ExecuteResultAsync(ActionContext context);
+}
+                        </pre></code>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        Метод ExecuteResultAsync() принимает контекст действия и выполняет генерацию результата.
+                        Теперь используем созданный нами класс HTMLResults в контроллере:
+                        <code><pre>
+using Microsoft.AspNetCore.Mvc;
+
+namespace MvcApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        public IActionResult Index()
+        {
+            return new HTMLResults("Ответ от класса HTMLResults");
+        }
+    }
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-11" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-11" data-frame-src="/C1/Action" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c8" role="tabpanel" aria-labelledby="nav-c8-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>ContentResult</b></br>
+                        Использование ContentResult:
+                        <code><pre>
+public IActionResult Index()
+{
+    return Content("Я использую ContentResult");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-12" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-12" data-frame-src="/C1/ContentResult" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>JsonResult</b></br>
+                        Допустим, у нас есть следующий класс User:
+                        <code><pre>
+record class Person(string Name, int Age);
+                        </pre></code>
+                        И тогда для отправки клиенту объекта Person мы можем написать следующий метод:
+                        <code><pre>
+public IActionResult Index()
+{
+    Person ivan = new Person("Ivan", 33);
+    return Json(ivan);
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-13" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-13" data-frame-src="/C1/JsonResult" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        Дополнительная версия метода Json() в качестве второго параметра принимает объект, который задает настройки сериализации в формат json. В качестве такого объекта выступает объект типа JsonSerializerOptions:
+                        <code><pre>
+using Microsoft.AspNetCore.Mvc;
+
+namespace MvcApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        public IActionResult Index()
+        {
+            var ivan = new Person("Ivan", 33);
+            var jsonOptions = new System.Text.Json.<i>JsonSerializerOptions</i>
+            { 
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true
+            };
+            return Json(ivan, jsonOptions);
+        }
+    }
+    record class Person(string Name, int Age);
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-14" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-14" data-frame-src="/C1/JsonResultSerialize" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-c9" role="tabpanel" aria-labelledby="nav-c9-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>Переадресация на другой адрес</b></br>
+                        Для временной переадресации применяется метод Redirect:
+                        <code><pre>
+ublic class HomeController : Controller
+{
+    public IActionResult Index() => Content("Home page");
+    public IActionResult About() => Content("About page");
+
+    public IActionResult Contact()
+    {
+        return Redirect("~/Home/About");
+    }
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-14" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-14" src="/C1/Main" data-frame-src="/C1/Contact" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        Ну и кроме того, также можно обращаться к внешнему ресурсу:
+                        <code><pre>
+public IActionResult Contact()
+{
+    return Redirect("https://yandex.ru");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-15" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-15" src="/C1/Main" data-frame-src="/C1/Web" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>Переадресация на действие контроллера</b></br>
+                        Рассмотрим на примере метода RedirectToAction():
+                        <code><pre>
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        return RedirectToAction("About", "Home");
+    }
+
+    public IActionResult About() => Content("About");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-16" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-16" src="/C1/Main" data-frame-src="/C1/RedirectTo" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        Теперь передадим при переадресации некоторые значения:
+                        <code><pre>
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        return RedirectToAction("About", "Home", new { name = "Ivan", age = 33 });
+    }
+
+    public IActionResult About(string name, int age) => Content($"Name:{name}  Age: {age}");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-17" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-17" src="/C1/Main" data-frame-src="/C1/RedirectWithParameters" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>Переадресация на маршрут</b></br>
+                        В методе app.MapControllerRoute задается один маршрут, который имеет имя "default". Используя это имя, мы можем выполнить переадресацию на этот маршрут. Например:
+                        <code><pre>
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        return RedirectToRoute("default", new { controller = "Home", action = "About", name = "Ivan", age = 99 });
+    }
+
+    public IActionResult About(string name, int age) => Content($"Имя:{name}  Возраст: {age}");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-18" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-18" src="/C1/Main" data-frame-src="/C1/RedirecttoRoute" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+            </div>
+            <!--ОТПРАВКА СТАТУСНЫХ КОДОВ-->
+            <div class="tab-pane fade" id="nav-c10" role="tabpanel" aria-labelledby="nav-c10-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>HttpNotFoundResult и HttpNotFoundObjectResult</b>
+                        <code><pre>
+public IActionResult Index()
+{
+    return NotFound("Ресурс не найден");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-19" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-19" data-frame-src="/C1/notFound" frameborder="0" height="100"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>UnauthorizedResult и UnauthorizedObjectResult</b>
+                        <code><pre>
+public IActionResult Index(int age)
+{
+    if (age &lt; 18) return Unauthorized(new Error("Доступ запрещен"));
+    return Content("Доступ разрешен");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-20" class="btn btn-light btn-sm">Выполнить код</button>
+                        <p class="mb-0">Мне меньше 18 лет</p>
+                        <iframe data-frame-group="c1-20" data-frame-src="/C1/Auth?age=17" frameborder="0" height="50"></iframe>
+                        <p class="mb-0">Мне больше 18 лет</p>
+                        <iframe data-frame-group="c1-20" data-frame-src="/C1/Auth?age=19" frameborder="0" height="50"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>BadResult и BadObjectResult</b>
+                        <code><pre>
+public IActionResult Index(string? name)
+{
+    if (string.IsNullOrEmpty(name)) return BadRequest("Name undefined");
+    return Content($"Name: {name}");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-21" class="btn btn-light btn-sm">Выполнить код</button>
+                        <p class="mb-0">Запрос без параметров</p>
+                        <iframe data-frame-group="c1-21" data-frame-src="/C1/Bad" frameborder="0" height="50"></iframe>
+                        <p class="mb-0">Запрос с параметром name=Home</p>
+                        <iframe data-frame-group="c1-21" data-frame-src="/C1/Bad?name=Home" frameborder="0" height="50"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>OkResult и OkObjectResult</b>
+                        <code><pre>
+public IActionResult Index()
+{
+    return Ok("Не беспокойтесь. Все хорошо!");
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-22" class="btn btn-light btn-sm">Выполнить код</button>
+                        <iframe data-frame-group="c1-22" data-frame-src="/C1/Okay" frameborder="0" height="50"></iframe>
+                    </div>
+                </div>
+            </div>
+            <!--ОТПРАВКА ФАЙЛОВ-->
+            <div class="tab-pane fade" id="nav-c11" role="tabpanel" aria-labelledby="nav-c11-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>Загрузка файла по пути. PhysicalFileResult</b>
+                        <code><pre>
+public class HomeController : Controller
+    {
+        public IActionResult GetFile()
+        {
+            // Путь к файлу
+            string file_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files/hello.txt");
+            // Тип файла - content-type
+            string file_type = "text/plain";
+            // Имя файла - необязательно
+            string file_name = "hello.txt";
+            return PhysicalFile(file_path, file_type, file_name);
+        }
+    }
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-23" class="btn btn-light btn-sm">Загрузить файл</button>
+                        <iframe data-frame-group="c1-23" data-frame-src="/C1/GetFile" frameborder="0" height="0"></iframe>
+                    </div>
+                </div>
+                                <div class="row">
+                    <div class="col-8">
+                        <b>Загрузка массива байтов</b>
+                        <code><pre>
+public IActionResult GetBytes()
+{
+    string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files/hello.txt");
+    byte[] mas = System.IO.File.ReadAllBytes(path);
+    string file_type = "text/plain";
+    string file_name = "hello2.txt";
+    return File(mas, file_type, file_name);
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-24" class="btn btn-light btn-sm">Загрузить файл</button>
+                        <iframe data-frame-group="c1-24" data-frame-src="/C1/GetBytes" frameborder="0" height="0"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>Отправка потока. FileStreamResult</b>
+                        <code><pre>
+public IActionResult GetStream()
+{
+    string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files/hello.txt");
+    FileStream fs = new FileStream(path, FileMode.Open);
+    string file_type = "text/plain";
+    string file_name = "hello3.txt";
+    return File(fs, file_type, file_name);
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-25" class="btn btn-light btn-sm">Загрузить файл</button>
+                        <iframe data-frame-group="c1-25" data-frame-src="/C1/GetStream" frameborder="0" height="0"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>VirtualFileResult</b>
+                        <code><pre>
+public IActionResult GetVirtualFile() => 
+    File("Files/hello.txt", "text/plain", "hello4.txt");
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" data-frame-load="c1-26" class="btn btn-light btn-sm">Загрузить файл</button>
+                        <iframe data-frame-group="c1-26" data-frame-src="/C1/GetVirtualFile" frameborder="0" height="0"></iframe>
+                    </div>
+                </div>
+            </div>
+            <!--ПЕРЕДАЧА ЗАВИСИМОСТЕЙ В КОНТРОЛЛЕР-->
+            <div class="tab-pane fade" id="nav-c12" role="tabpanel" aria-labelledby="nav-c12-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>Передача через конструктор</b>
+                        <code><pre>
+public class HomeController : Controller
+{
+    readonly ITimeService timeService;
+
+    public HomeController(ITimeService timeServ)
+    {
+        timeService = timeServ;
+    }
+    public string Index() => timeService.Time;
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe src="/Time" frameborder="1" height="50"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>Передача зависимостей в методы. FromServices</b>
+                        <code><pre>
+public string Index([FromServices] ITimeService timeService)
+{
+    return timeService.Time;
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe src="/Time/tService" frameborder="1" height="50"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <b>HttpContext.RequestServices</b>
+                        <code><pre>
+public string Index()
+{
+    ITimeService? timeService = HttpContext.RequestServices.GetService<ITimeService>();
+    return timeService?.Time ?? "Не определено";
+}
+                        </pre></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe src="/Time/Now" frameborder="1" height="50"></iframe>
+                    </div>
+                </div>
+            </div>
+            <!--ПЕРЕОПРЕДЕЛЕНИЕ КОНТРОЛЛЕРОВ-->
+            <div class="tab-pane fade" id="nav-c13" role="tabpanel" aria-labelledby="nav-c13-tab">
+                <div class="row">
+                    <div class="col-8">
+                        <b>OnActionExecuting()</b>
+                        <code>
+                        <code><pre>
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+public abstract class LogBaseController : Controller
+{
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        Console.WriteLine($"Controller: {context.Controller.GetType().Name}");
+        Console.WriteLine($"Action: {context.ActionDescriptor.DisplayName}");
+
+        base.OnActionExecuting(context);
+    }
+}
+                        </pre></code></code>
+                    </div>
+                    <div class="col-4">
+                        <iframe src="/Room" frameborder="1" height="50"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+[...document.querySelectorAll('[data-frame-load]')].forEach(button => {
+    button.addEventListener('click', () => {
+        const group = button.getAttribute('data-frame-load');
+        [...document.querySelectorAll(`[data-frame-group="${group}"]`)].forEach(frame => {
+            frame.setAttribute('src', frame.getAttribute('data-frame-src'));
+        });
+    });
+});
+</script>

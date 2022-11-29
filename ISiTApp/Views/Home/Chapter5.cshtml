@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "Глава 5. Модели.";
+}
+<h1  class="display-5">@ViewBag.Title</h1>
+
+<p></p>
+
+<div class="row">
+    <div class="col-3">
+        <div class="nav flex-column nav-pills" id="nav-pills" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="nav-c1-tab" data-toggle="tab" href="#nav-c1" role="tab" aria-controls="nav-c1" aria-selected="true">Модели представления View Model</a>
+            <a class="nav-link" id="nav-c2-tab" data-toggle="tab" href="#nav-c2" role="tab" aria-controls="nav-c2" aria-selected="false">Привязка модели</a>
+            <a class="nav-link" id="nav-c5-tab" data-toggle="tab" href="#nav-c5" role="tab" aria-controls="nav-c5" aria-selected="false">Управление привязкой</a>
+            <a class="nav-link" id="nav-c6-tab" data-toggle="tab" href="#nav-c6" role="tab" aria-controls="nav-c6" aria-selected="false">Создание привязчика модели</a>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="tab-content" id="nav-tabContent">
+            <!--Модели представления View Model-->
+            <div class="tab-pane fade show active" id="nav-c1" role="tabpanel" aria-labelledby="nav-c1-tab">
+                <div class="row">
+                   <div class="col-6">
+                       <b>Модели представления View Model</b></br>
+                   </div>
+                   <div class="col-6">
+                        <iframe src="/devviews" height="310"></iframe>
+                   </div>
+                </div>
+            </div>
+            <!--Привязка модели-->
+            <div class="tab-pane fade" id="nav-c2" role="tabpanel" aria-labelledby="nav-c2-tab">
+                <div class="row">
+                   <div class="col-8">
+                       <b>Параметры маршрутов</b></br>
+                   <code><pre>
+https://localhost:XXXX/Home/Index?person.Name=Tom&person.Age=37&person.Company.Name=Microsoft
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                       <button type="button" data-frame-load="c1-1" class="btn btn-link btn-sm">Выполнить запрос</button>
+                       <iframe data-frame-group="c1-1" data-frame-src="/Home/IndexPerson?person.Name=Tom&person.Age=37&person.Company.Name=Microsoft" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+            </div>
+            <!--Управление привязкой-->
+            <div class="tab-pane fade" id="nav-c5" role="tabpanel" aria-labelledby="nav-c5-tab">
+                <div class="row">
+                   <div class="col-8">
+                    <b>BindRequired и BindNever</b><br/>
+                   <code><pre>
+// МОДЕЛЬ
+public class User
+{
+    public int Id { get; set; }
+    [BindRequired] <b>// Атрибут требует обязательного наличия значения для свойства модели.</b>
+    public string Name { get; set; } = "";
+    public int Age { get; set; }
+    [BindNever] <b>// Атрибут указывает, что свойство модели надо исключить из механизма привязки.</b>
+    public bool HasRight { get; set; }
+}
+// МЕТОД
+public string AddUser(User user)
+{
+ if (ModelState.IsValid)
+    {
+        return $"Id: {user.Id}  Name: {user.Name}  Age: {user.Age}  HasRight: {user.HasRight}";
+    }
+    string errors = $"Количество ошибок: {ModelState.ErrorCount}. Ошибки в свойствах: ";
+    foreach(var prop in ModelState.Keys)
+    {
+        errors = $"{errors}{prop}; ";
+    }
+    return errors;
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-2" class="btn btn-link btn-sm">https://localhost:XXXX/Home/AddUser?HasRight=true</button>
+                      <iframe data-frame-group="c1-2" data-frame-src="/Home/AddUser?HasRight=true" frameborder="0" height="50"></iframe>
+                      <button type="button" data-frame-load="c1-3" class="btn btn-link btn-sm">https://localhost:XXXX/Home/AddUser?name=Ivan&HasRight=true</button>
+                      <iframe data-frame-group="c1-3" data-frame-src="/Home/AddUser?name=Ivan&HasRight=true" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+                <div class="row">
+                   <div class="col-8">
+                    <b>Атрибут Bind</b>
+                   <code><pre>
+<b> Применение атрибута Bind в методе AddUser:</b>
+public string AddUser(<b>[Bind("Name")</b>] User user)
+{
+    return $"Name: {user.Name}  Age: {user.Age}  HasRight: {user.HasRight}";
+}
+<b> Применение атрибута Bind к модели User:</b>
+using Microsoft.AspNetCore.Mvc;
+
+[Bind("Name")]
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public int Age { get; set; }
+    public bool HasRight { get; set; }
+}
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                      <button type="button" data-frame-load="c1-4" class="btn btn-link btn-sm">https://localhost:XXXX//Home/AddUser?name=Ivan&Age=33</button>
+                      <iframe data-frame-group="c1-4" data-frame-src="/Home/AddOtherUser?name=Ivan&Age=33" frameborder="0" height="50"></iframe>
+                      <button type="button" data-frame-load="c1-5" class="btn btn-link btn-sm">https://localhost:XXXX//Home/AddUser?Id=5&Age=33</button>
+                      <iframe data-frame-group="c1-5" data-frame-src="/Home/AddOtherUser?Id=5&Age=33" frameborder="0" height="50"></iframe>
+                   </div>
+                </div>
+            </div>
+            <!--Области-->
+            <div class="tab-pane fade" id="nav-c6" role="tabpanel" aria-labelledby="nav-c6-tab">
+                <div class="row">
+                   <div class="col-8">
+                    <b>Создание привязчика модели</b><br/>
+                   <code><pre>
+                   </pre></code>
+                   </div>
+                   <div class="col-4">
+                        @await Html.PartialAsync("Create")
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+[...document.querySelectorAll('[data-frame-load]')].forEach(button => {
+    button.addEventListener('click', () => {
+        const group = button.getAttribute('data-frame-load');
+        [...document.querySelectorAll(`[data-frame-group="${group}"]`)].forEach(frame => {
+            frame.setAttribute('src', frame.getAttribute('data-frame-src'));
+        });
+    });
+});
+</script>
